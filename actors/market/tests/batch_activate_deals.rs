@@ -278,9 +278,11 @@ fn fails_to_activate_single_sector_duplicate_deals() {
     // group into sectors
     let sectors_deals = vec![
         // duplicate id_1
-        SectorDeals { deal_ids: vec![id_1, id_1, id_2], sector_type, sector_expiry: END_EPOCH },
+        SectorDeals { 
+            deal_ids: vec![id_1, id_1, id_2], sector_type, sector_expiry: END_EPOCH, sector_number: 0,
+        },
     ];
-    let res = batch_activate_deals_raw(&rt, PROVIDER_ADDR, sectors_deals, false).unwrap();
+    let res = batch_activate_deals_raw(&rt, PROVIDER_ADDR, sectors_deals).unwrap();
     let res: BatchActivateDealsResult =
         res.unwrap().deserialize().expect("VerifyDealsForActivation failed!");
 
