@@ -1,8 +1,5 @@
 use fil_actors_evm_shared::address::EthAddress;
-use fil_actors_runtime::{
-    actor_dispatch_unrestricted, actor_error, ActorError, AsActorError, EAM_ACTOR_ADDR,
-    INIT_ACTOR_ADDR,
-};
+use fil_actors_runtime::{actor_error, ActorError, AsActorError, EAM_ACTOR_ADDR, INIT_ACTOR_ADDR};
 use fvm_ipld_blockstore::Blockstore;
 use fvm_ipld_encoding::ipld_block::IpldBlock;
 use fvm_ipld_encoding::BytesSer;
@@ -17,6 +14,7 @@ use cid::Cid;
 use fil_actors_runtime::runtime::{ActorCode, Runtime};
 use fvm_shared::METHOD_CONSTRUCTOR;
 use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 
 pub use types::*;
 
@@ -409,14 +407,38 @@ impl ActorCode for EvmContractActor {
         "EVMContract"
     }
 
-    actor_dispatch_unrestricted! {
-        Constructor => constructor,
-        InvokeContract => invoke_contract [default_params],
-        GetBytecode => bytecode,
-        GetBytecodeHash => bytecode_hash,
-        GetStorageAt => storage_at,
-        InvokeContractDelegate => invoke_contract_delegate,
-        Resurrect => resurrect,
-        _ => handle_filecoin_method [raw],
+    fn invoke_method<RT>(
+        rt: &RT,
+        method: fvm_shared::MethodNum,
+        args: Option<IpldBlock>,
+    ) -> Result<Option<IpldBlock>, ActorError>
+    where
+        RT: Runtime,
+        RT::Blockstore: Clone,
+    {
+        match FromPrimitive::from_u64(method) {
+            Some(Self::Methods::Constructor) => {
+                ::fil_actors_runtime::dispatch(rt, Self::constructor, &args)
+            }
+            Some(Self::Methods::InvokeContract) => {
+                ::fil_actors_runtime::dispatch_default(rt, Self::invoke_contract, &args)
+            }
+            Some(Self::Methods::GetBytecode) => {
+                Ok(IpldBlock::serialize_dag_cbor(&Self::bytecode(rt)?)?)
+            }
+            Some(Self::Methods::GetBytecodeHash) => {
+                ::fil_actors_runtime::dispatch(rt, Self::bytecode_hash, &args)
+            }
+            Some(Self::Methods::GetStorageAt) => {
+                ::fil_actors_runtime::dispatch(rt, Self::storage_at, &args)
+            }
+            Some(Self::Methods::InvokeContractDelegate) => {
+                ::fil_actors_runtime::dispatch(rt, Self::invoke_contract_delegate, &args)
+            }
+            Some(Self::Methods::Resurrect) => {
+                ::fil_actors_runtime::dispatch(rt, Self::resurrect, &args)
+            }
+            None => Self::handle_filecoin_method(rt, method, args),
+        }
     }
 }
