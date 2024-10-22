@@ -61,9 +61,6 @@ pub struct Policy {
     /// This limits the number of simultaneous fault, recovery, or sector-extension declarations.
     pub addressed_partitions_max: u64,
 
-    /// Maximum number of unique "declarations" in batch operations.
-    pub declarations_max: u64,
-
     /// The maximum number of sector numbers addressable in a single invocation
     /// (which implies also the max infos that may be loaded at once).
     /// One upper bound on this is the max size of a storage block: 1MiB supports 130k at 8 bytes each,
@@ -198,7 +195,6 @@ impl Default for Policy {
             max_peer_id_length: policy_constants::MAX_PEER_ID_LENGTH,
             max_multiaddr_data: policy_constants::MAX_MULTIADDR_DATA,
             addressed_partitions_max: policy_constants::ADDRESSED_PARTITIONS_MAX,
-            declarations_max: policy_constants::DECLARATIONS_MAX,
             addressed_sectors_max: policy_constants::ADDRESSED_SECTORS_MAX,
             posted_partitions_max: policy_constants::POSTED_PARTITIONS_MAX,
             max_pre_commit_randomness_lookback:
@@ -304,8 +300,6 @@ pub mod policy_constants {
     // of partitions of 32GiB sectors with 1 message per epoch within a single half-hour deadline.
     // A miner can of course submit more messages.
     pub const ADDRESSED_PARTITIONS_MAX: u64 = MAX_PARTITIONS_PER_DEADLINE;
-
-    pub const DECLARATIONS_MAX: u64 = ADDRESSED_PARTITIONS_MAX;
 
     pub const ADDRESSED_SECTORS_MAX: u64 = 25_000;
 
