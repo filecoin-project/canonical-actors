@@ -33,7 +33,6 @@ impl Onboarding {
         Self {
             epoch_delay,
             pre_commit_sector_count,
-            pre_commit_batch_size,
             prove_commit_sector_count,
             prove_commit_aggregate_size,
         }
@@ -90,7 +89,6 @@ pub fn batch_onboarding_test(v: &dyn VM) {
             let mut new_precommits = precommit_sectors_v2(
                 v,
                 item.pre_commit_sector_count,
-                item.pre_commit_batch_size,
                 vec![],
                 &worker,
                 &id_addr,

@@ -65,7 +65,6 @@ fn setup(v: &dyn VM) -> (MinerInfo, SectorInfo) {
     let _ = precommit_sectors_v2(
         v,
         1,
-        1,
         vec![],
         &worker,
         &id_addr,
@@ -276,7 +275,6 @@ pub fn overdue_precommit_test(v: &dyn VM) {
     let sector_number: SectorNumber = 100;
     let precommit = precommit_sectors_v2(
         v,
-        1,
         1,
         vec![],
         &worker,

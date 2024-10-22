@@ -4,7 +4,6 @@ use fil_actor_miner::{
     qa_power_max, PreCommitSectorBatchParams, PreCommitSectorParams, State,
 };
 use fil_actor_power::Method as PowerMethod;
-use fil_actors_runtime::runtime::Policy;
 use fil_actors_runtime::test_utils::*;
 use fvm_shared::clock::ChainEpoch;
 use fvm_shared::deal::DealID;
