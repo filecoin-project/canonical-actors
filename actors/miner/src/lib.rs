@@ -1486,13 +1486,6 @@ impl Actor {
             let policy = rt.policy();
             if sectors.is_empty() {
                 return Err(actor_error!(illegal_argument, "batch empty"));
-            } else if sectors.len() > policy.pre_commit_sector_batch_max_size {
-                return Err(actor_error!(
-                    illegal_argument,
-                    "batch of {} too large, max {}",
-                    sectors.len(),
-                    policy.pre_commit_sector_batch_max_size
-                ));
             }
         }
         // Check per-sector preconditions before opening state transaction or sending other messages.
@@ -3986,15 +3979,6 @@ fn validate_replica_updates<'a, BS>(
 where
     BS: Blockstore,
 {
-    if updates.len() > policy.prove_replica_updates_max_size {
-        return Err(actor_error!(
-            illegal_argument,
-            "too many updates ({} > {})",
-            updates.len(),
-            policy.prove_replica_updates_max_size
-        ));
-    }
-
     let mut sector_numbers = BTreeSet::<SectorNumber>::new();
     let mut validate_one = |update: &ReplicaUpdateInner,
                             sector_info: &SectorOnChainInfo|
