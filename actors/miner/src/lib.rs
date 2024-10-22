@@ -1482,11 +1482,8 @@ impl Actor {
         sectors: Vec<SectorPreCommitInfoInner>,
     ) -> Result<(), ActorError> {
         let curr_epoch = rt.curr_epoch();
-        {
-            let policy = rt.policy();
-            if sectors.is_empty() {
-                return Err(actor_error!(illegal_argument, "batch empty"));
-            }
+        if sectors.is_empty() {
+            return Err(actor_error!(illegal_argument, "batch empty"));
         }
         // Check per-sector preconditions before opening state transaction or sending other messages.
         let challenge_earliest = curr_epoch - rt.policy().max_pre_commit_randomness_lookback;
